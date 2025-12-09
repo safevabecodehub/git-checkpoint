@@ -2,13 +2,11 @@
 
 set -e
 
-# Цвета для вывода
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m' 
 
-# Функция для вывода сообщений
 info() {
     echo -e "${GREEN}ℹ️  $1${NC}"
 }
@@ -21,7 +19,6 @@ error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-# Определение платформы
 detect_platform() {
     OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     ARCH=$(uname -m)
@@ -60,16 +57,13 @@ detect_platform() {
 
     PLATFORM="${OS}/${ARCH}"
     BINARY_NAME="git-checkpoint"
-    [ "$OS" = "windows" ] && BINARY_NAME="git-checkpoint.exe"
-    ARCHIVE_NAME="${BINARY_NAME}-${OS}-${ARCH}"
-    [ "$OS" = "windows" ] && ARCHIVE_NAME="${ARCHIVE_NAME}.zip" || ARCHIVE_NAME="${ARCHIVE_NAME}.tar.gz"
+    ARCHIVE_NAME="git-checkpoint-${OS}-${ARCH}"
+    [ "$OS" = "windows" ] && ARCHIVE_NAME="git-checkpoint.exe" || ARCHIVE_NAME="${ARCHIVE_NAME}.tar.gz"
 }
 
-# Получение информации о последнем релизе
 get_latest_release() {
     info "Получение информации о последнем релизе..."
 
-    # Используем GitHub API для получения последнего релиза
     RELEASE_INFO=$(curl -s "https://api.github.com/repos/${GITHUB_REPO}/releases/latest")
 
     if [ $? -ne 0 ]; then
@@ -88,7 +82,6 @@ get_latest_release() {
     info "Найдена версия: $VERSION"
 }
 
-# Скачивание и установка
 install_binary() {
     info "Скачивание $ARCHIVE_NAME..."
 
@@ -112,7 +105,6 @@ install_binary() {
         tar -xzf "$ARCHIVE_NAME"
     fi
 
-    # Определение директории установки
     if [ -w "/usr/local/bin" ] || [ -w "/usr/local" ]; then
         INSTALL_DIR="/usr/local/bin"
         SUDO=""
@@ -132,12 +124,10 @@ install_binary() {
         chmod +x "$INSTALL_DIR/$BINARY_NAME"
     fi
 
-    # Очистка
     cd /
     rm -rf "$TMP_DIR"
 }
 
-# Проверка установки
 verify_installation() {
     info "Проверка установки..."
 
@@ -150,10 +140,8 @@ verify_installation() {
     fi
 }
 
-# Основная функция
 main() {
-    # Замените на ваш GitHub репозиторий
-    GITHUB_REPO="username/git-checkpoint-app"
+    GITHUB_REPO="safevabecodehub/git-checkpoint"
 
     info "Установка Git Checkpoint TUI..."
 

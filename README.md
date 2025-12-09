@@ -27,11 +27,11 @@
 #### Быстрый старт (рекомендуется):
 ```bash
 # Для Linux/macOS/Windows (через Git Bash)
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/git-checkpoint-app/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/safevabecodehub/git-checkpoint/main/install.sh | bash
 ```
 
 #### Ручная установка:
-1. Скачай бинарник для своей платформы из [Releases](https://github.com/YOUR_USERNAME/git-checkpoint-app/releases)
+1. Скачай бинарник для своей платформы из [Releases](https://github.com/safevabecodehub/git-checkpoint/releases)
 2. Распакуй архив
 3. Сделай файл исполняемым: `chmod +x git-checkpoint`
 4. Перемести в PATH: `sudo mv git-checkpoint /usr/local/bin/`
