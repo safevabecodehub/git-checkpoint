@@ -100,8 +100,8 @@ install_binary() {
     info "Распаковка..."
     cd "$TMP_DIR"
     if [ "$OS" = "windows" ]; then
-        unzip "$ARCHIVE_NAME"
-        EXTRACTED_BINARY="$BINARY_NAME"
+        cp "$ARCHIVE_PATH" "$TMP_DIR/git-checkpoint.exe"
+        EXTRACTED_BINARY="git-checkpoint.exe"
     else
         tar -xzf "$ARCHIVE_NAME"
         EXTRACTED_BINARY="git-checkpoint-${OS}-${ARCH}"
@@ -113,18 +113,37 @@ install_binary() {
     else
         INSTALL_DIR="$HOME/bin"
         mkdir -p "$INSTALL_DIR"
+        
         export PATH="$INSTALL_DIR:$PATH"
-        warn "Установка в $INSTALL_DIR (добавьте в PATH: export PATH=\"$INSTALL_DIR:\$PATH\")"
+        
+        SHELL_RC=""
+        USER_SHELL=$(basename "$SHELL")
+        case "$USER_SHELL" in
+            zsh)
+                SHELL_RC="$HOME/.zshrc"
+                ;;
+            bash)
+                SHELL_RC="$HOME/.bashrc"
+                ;;
+            *)
+                SHELL_RC="$HOME/.profile"
+                ;;
+        esac
+        
+        if [ -f "$SHELL_RC" ] && ! grep -q "$INSTALL_DIR" "$SHELL_RC"; then
+            echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >> "$SHELL_RC"
+            info "Добавлено в PATH в файл $SHELL_RC"
+        fi
+        
+        warn "Установка в $INSTALL_DIR. Перезапустите терминал или выполните: source $SHELL_RC"
     fi
 
     info "Установка в $INSTALL_DIR..."
-    # Переименовываем в стандартное имя
-    cp "$EXTRACTED_BINARY" git-checkpoint
     if [ -n "$SUDO" ]; then
-        sudo cp git-checkpoint "$INSTALL_DIR/"
+        sudo cp "$EXTRACTED_BINARY" "$INSTALL_DIR/git-checkpoint"
         sudo chmod +x "$INSTALL_DIR/git-checkpoint"
     else
-        cp git-checkpoint "$INSTALL_DIR/"
+        cp "$EXTRACTED_BINARY" "$INSTALL_DIR/git-checkpoint"
         chmod +x "$INSTALL_DIR/git-checkpoint"
     fi
 
@@ -132,17 +151,6 @@ install_binary() {
     rm -rf "$TMP_DIR"
 }
 
-verify_installation() {
-    info "Проверка установки..."
-
-    if command -v git-checkpoint >/dev/null 2>&1; then
-        info "✅ Git Checkpoint установлен успешно!"
-        git-checkpoint --help | head -5
-    else
-        error "❌ Установка не удалась. Проверьте PATH."
-        exit 1
-    fi
-}
 
 main() {
     GITHUB_REPO="safevabecodehub/git-checkpoint"
@@ -154,7 +162,6 @@ main() {
 
     get_latest_release
     install_binary
-    verify_installation
 
     info "🎉 Установка завершена! Запустите 'git-checkpoint' для начала работы."
 }
