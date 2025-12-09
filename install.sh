@@ -101,8 +101,10 @@ install_binary() {
     cd "$TMP_DIR"
     if [ "$OS" = "windows" ]; then
         unzip "$ARCHIVE_NAME"
+        EXTRACTED_BINARY="$BINARY_NAME"
     else
         tar -xzf "$ARCHIVE_NAME"
+        EXTRACTED_BINARY="git-checkpoint-${OS}-${ARCH}"
     fi
 
     if [ -w "/usr/local/bin" ] || [ -w "/usr/local" ]; then
@@ -116,12 +118,14 @@ install_binary() {
     fi
 
     info "Установка в $INSTALL_DIR..."
+    # Переименовываем в стандартное имя
+    cp "$EXTRACTED_BINARY" git-checkpoint
     if [ -n "$SUDO" ]; then
-        sudo cp "$BINARY_NAME" "$INSTALL_DIR/"
-        sudo chmod +x "$INSTALL_DIR/$BINARY_NAME"
+        sudo cp git-checkpoint "$INSTALL_DIR/"
+        sudo chmod +x "$INSTALL_DIR/git-checkpoint"
     else
-        cp "$BINARY_NAME" "$INSTALL_DIR/"
-        chmod +x "$INSTALL_DIR/$BINARY_NAME"
+        cp git-checkpoint "$INSTALL_DIR/"
+        chmod +x "$INSTALL_DIR/git-checkpoint"
     fi
 
     cd /
@@ -131,9 +135,9 @@ install_binary() {
 verify_installation() {
     info "Проверка установки..."
 
-    if command -v "$BINARY_NAME" >/dev/null 2>&1; then
+    if command -v git-checkpoint >/dev/null 2>&1; then
         info "✅ Git Checkpoint установлен успешно!"
-        "$BINARY_NAME" --help | head -5
+        git-checkpoint --help | head -5
     else
         error "❌ Установка не удалась. Проверьте PATH."
         exit 1
