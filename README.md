@@ -26,7 +26,6 @@
 
 #### Быстрый старт (рекомендуется):
 ```bash
-# Для Linux/macOS/Windows (через Git Bash)
 curl -fsSL https://raw.githubusercontent.com/safevabecodehub/git-checkpoint/main/install.sh | bash
 ```
 
